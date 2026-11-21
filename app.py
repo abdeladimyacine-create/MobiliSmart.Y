@@ -42,7 +42,8 @@ st.iframe("""<script>
 # Toutes les couleurs de texte respectent un contraste d'au moins 4,5:1 (RGAA).
 STYLE = """
 <style>
-[data-testid="stToolbar"] { display: none; }                 /* cache le bouton « Deploy » */
+[data-testid="stAppDeployButton"] { display: none; }         /* cache seulement le bouton « Deploy » */
+[data-testid="stExpandSidebarButton"] { display: flex !important; visibility: visible !important; }
 .block-container { padding-top: 2rem; max-width: 780px; }
 
 /* Bandeau d'en-tête */
@@ -256,7 +257,7 @@ if page == "Planifier mon trajet":
     st.markdown('<div class="ms-hero"><p class="ms-hero-titre">Où allez-vous ?</p>'
                 '<p class="ms-hero-texte">MobiliSmart vérifie que votre trajet est adapté à votre besoin '
                 'et vous indique s\'il y aura du monde.</p>'
-                '<p class="ms-mobile">☰ Menu en haut à gauche : grands caractères, contraste '
+                '<p class="ms-mobile">Touchez » en haut à gauche pour ouvrir le menu : grands caractères, contraste '
                 'et pilotage du réseau.</p></div>', unsafe_allow_html=True)
 
     donnees = lire_donnees()
