@@ -83,6 +83,25 @@ STYLE = """
             font-weight: 800; margin-right: 6px; }
 .ms-valeur { font-size: 1.8rem !important; font-weight: 800; color: #1B1F24; margin: 0 0 6px 0; line-height: 1.2; }
 .ms-section { font-size: 1.15rem; font-weight: 800; color: #1B1F24; margin: 22px 0 6px 0; }
+
+/* Boutons assez grands pour le doigt (44 px minimum, recommandation WCAG) */
+.stButton button, .stFormSubmitButton button, .stDownloadButton button { min-height: 48px; }
+
+/* Message visible seulement sur téléphone */
+.ms-mobile { display: none; }
+
+/* ---------- Adaptation au téléphone (écran de moins de 640 px) ---------- */
+@media (max-width: 640px) {
+    .block-container { padding: 1rem 0.8rem 2rem 0.8rem; }
+    .ms-hero { padding: 18px 18px; border-radius: 16px; }
+    .ms-hero .ms-hero-titre { font-size: 1.45rem; }
+    .ms-carte { padding: 16px 16px; border-radius: 16px; }
+    .ms-titre-trajet { font-size: 1.2rem; }
+    .ms-valeur { font-size: 1.5rem !important; }
+    .ms-pastille { font-size: 0.85rem; padding: 5px 10px; }
+    .ms-barre { min-height: 56px; }
+    .ms-mobile { display: block; color: #DCE8F7; font-size: 0.85rem; margin: 10px 0 0 0; }
+}
 </style>
 """
 st.markdown(STYLE, unsafe_allow_html=True)
@@ -155,7 +174,8 @@ def graphique_affluence(tableau, heure_choisie):
     tableau["Repère"] = ["Votre heure de départ" if h == heure_choisie else "Autres heures"
                          for h in tableau["Heure"]]
     barres = alt.Chart(tableau).mark_bar(cornerRadiusTopLeft=4, cornerRadiusTopRight=4).encode(
-        x=alt.X("Heure:O", title="Heure de la journée", axis=alt.Axis(labelAngle=0)),
+        x=alt.X("Heure:O", title="Heure de la journée", axis=alt.Axis(labelAngle=0,   # une heure sur 3 : lisible sur téléphone
+                                      labelExpr="datum.value % 3 == 0 ? datum.value + 'h' : ''")),
         y=alt.Y("Remplissage prévu (%):Q", title="Remplissage prévu (%)", scale=alt.Scale(domain=[0, 100])),
         color=alt.Color("Repère:N", title=None, legend=alt.Legend(orient="top"),
                         scale=alt.Scale(domain=["Votre heure de départ", "Autres heures"],
@@ -235,7 +255,9 @@ if page == "Planifier mon trajet":
 
     st.markdown('<div class="ms-hero"><p class="ms-hero-titre">Où allez-vous ?</p>'
                 '<p class="ms-hero-texte">MobiliSmart vérifie que votre trajet est adapté à votre besoin '
-                'et vous indique s\'il y aura du monde.</p></div>', unsafe_allow_html=True)
+                'et vous indique s\'il y aura du monde.</p>'
+                '<p class="ms-mobile">☰ Menu en haut à gauche : grands caractères, contraste '
+                'et pilotage du réseau.</p></div>', unsafe_allow_html=True)
 
     donnees = lire_donnees()
     lignes_reseau = lire_table("lignes").set_index("nom_ligne").to_dict("index")
