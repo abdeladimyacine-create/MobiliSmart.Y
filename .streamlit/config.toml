@@ -1,0 +1,11 @@
+# Thème de l'application MobiliSmart
+# Couleurs choisies pour un bon contraste (critère RGAA : au moins 4,5:1 pour le texte)
+# Le rouge est réservé aux messages importants (saturé, trajet non adapté) :
+# la couleur principale de l'application est donc un bleu.
+
+[theme]
+base = "light"
+primaryColor = "#0B5CAD"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F2F5F9"
+textColor = "#1B1F24"

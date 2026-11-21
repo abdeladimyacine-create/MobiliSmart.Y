@@ -1,0 +1,14 @@
+# Fichier des identifiants du pilotage : CONFIDENTIEL, jamais publié
+.streamlit/secrets.toml
+
+# Fichiers temporaires de Python
+__pycache__/
+*.pyc
+
+# Environnements virtuels
+.venv/
+venv/
+
+# Fichiers système
+.DS_Store
+Thumbs.db
