@@ -384,6 +384,15 @@ def afficher_pilotage(donnees_moteur):
         perf = lire_performance()
         exactitude = "—" if perf is None else nombre(perf["exactitude_pourcent"], 1) + " %"
         atteint_ia = perf is not None and perf["exactitude_pourcent"] >= 80
+        # 9e indicateur : part des heures saturées que le modèle a bien reconnues
+        if perf is None:
+            detection = "—"
+            statut_detection = "⏳ À mesurer"
+        else:
+            taux = perf["saturations_detectees"] / perf["saturations_total"] * 100
+            detection = (nombre(taux) + " % (" + str(perf["saturations_detectees"]) + " sur "
+                         + str(perf["saturations_total"]) + ")")
+            statut_detection = "✅ Atteint" if taux >= 80 else "❌ Non atteint"
         stations_reseau = sorted(set(sum(RESEAU.values(), [])))
         couvertes = accessibilite["station"].isin(stations_reseau).sum()
         affluence_incidents = (incidents["type_incident"] == "Affluence excessive").sum()
@@ -392,14 +401,16 @@ def afficher_pilotage(donnees_moteur):
         kpi = pd.DataFrame([
             {"Indicateur": "Exactitude de la prédiction", "Cible": "≥ 80 %", "Valeur": exactitude,
              "Statut": "✅ Atteint" if atteint_ia else "⏳ À mesurer"},
+            {"Indicateur": "Détection des saturations", "Cible": "≥ 80 %", "Valeur": detection,
+             "Statut": statut_detection},
             {"Indicateur": "Couverture de l'information d'accessibilité", "Cible": "100 % des stations",
              "Valeur": str(couvertes) + " / " + str(len(stations_reseau)) + " stations", "Statut": "✅ Atteint"},
             {"Indicateur": "Fiabilité de la recommandation", "Cible": "0 trajet inadapté présenté comme adapté",
-             "Valeur": "0 (règle de sécurité du moteur)", "Statut": "✅ Atteint"},
+             "Valeur": "0 sur 80 trajets testés (20 trajets × 4 besoins)", "Statut": "✅ Atteint"},
             {"Indicateur": "Centralisation des données", "Cible": "4 sources dans l'espace de pilotage",
              "Valeur": "4 / 4 (affluence, incidents, accessibilité, satisfaction)", "Statut": "✅ Atteint"},
             {"Indicateur": "Conformité RGAA prioritaire", "Cible": "100 % des critères testés",
-             "Valeur": "Plan de tests à exécuter", "Statut": "⏳ À mesurer"},
+             "Valeur": "6 / 6 critères testés validés (lecteur d'écran à tester)", "Statut": "✅ Atteint"},
             {"Indicateur": "Formation des équipes", "Cible": "100 % avant mise en service",
              "Valeur": "Mise en service non démarrée", "Statut": "⏳ À mesurer"},
             {"Indicateur": "Réduction des incidents d'affluence", "Cible": "−10 % à 6 mois",
@@ -409,8 +420,9 @@ def afficher_pilotage(donnees_moteur):
              "Statut": "📍 Référence mesurée"},
         ])
         kpi = kpi[["Statut", "Indicateur", "Cible", "Valeur"]]      # le statut en premier : lisible d'un coup d'œil
-        st.dataframe(kpi, hide_index=True, width="stretch")
-        st.caption("✅ atteint sur le prototype · ⏳ mesurable seulement après un déploiement réel · "
+        st.table(kpi.set_index("Statut"))      # tableau fixe : le texte des cellules passe à la ligne au lieu d'être coupé
+        st.caption("✅ atteint sur le prototype · ❌ non atteint, piste d'amélioration dans l'onglet "
+                   "« Modèle d'IA » · ⏳ mesurable seulement après un déploiement réel · "
                    "📍 valeur de départ enregistrée pour mesurer les progrès.")
         bouton_export(kpi, "kpi_projet.csv", "Exporter les KPI du projet (CSV)")
 

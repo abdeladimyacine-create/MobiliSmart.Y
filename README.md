@@ -2,6 +2,9 @@
 
 **MobiliSmart** est le prototype d'un service numérique qui rend le transport public de Mobility+ plus accessible, grâce à la donnée et à l'intelligence artificielle.
 
+🔗 **Application en ligne : https://mobilismarty-y7sqcah8sqrpsk34yetase.streamlit.app/**
+(utilisable sur ordinateur et sur téléphone)
+
 Projet réalisé dans le cadre du **Mastère Transformation Digitale, Data et IA (ISCOD)**, à partir du cas fictif Mobility+.
 
 ---
@@ -15,6 +18,7 @@ Projet réalisé dans le cadre du **Mastère Transformation Digitale, Data et IA
 - **Conseil du meilleur horaire**, 2 heures avant ou après l'heure choisie.
 - Signalement des **incidents importants**.
 - Réglages d'accessibilité : grands caractères et contraste renforcé.
+- Affichage adapté au téléphone (boutons larges, mise en page compacte).
 
 ### Pour les équipes internes : « Pilotage du réseau » (accès protégé)
 - Filtres par période, ligne et station.
@@ -57,7 +61,7 @@ mobility-plus-acces/
 
 ## Installation et lancement en local
 
-1. Installer Python 3.12 ou plus récent.
+1. Installer Python 3.13 (version utilisée pour le déploiement).
 2. Installer les bibliothèques :
    ```
    pip install -r requirements.txt

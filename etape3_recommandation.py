@@ -205,22 +205,22 @@ def stations_compatibles(donnees, besoin):
     return liste
 
 
-# ---------- 7. Incident bloquant = "En cours" ET gravité "Élevée" ----------
-def incident_bloquant(incidents, station):
-    bloquants = incidents[
+# ---------- 7. Incident important = "En cours" ET gravité "Élevée" (alerte, ne rend pas le trajet non adapté) ----------
+def incident_important(incidents, station):
+    importants = incidents[
         (incidents["station_principale"] == station)
         & (incidents["statut"] == "En cours")
         & (incidents["gravite"] == "Élevée")
     ]
-    return len(bloquants) > 0
+    return len(importants) > 0
 
 
 # ---------- 8. La note sur 100 du trajet ----------
 # Un trajet vaut ce que vaut son point le plus faible :
 # on prend la station la MOINS accessible et l'étape la PLUS chargée.
-def calculer_score(score_accessibilite, occupation, bloquant):
+def calculer_score(score_accessibilite, occupation, incident):
     tranquillite = 100 - occupation * 100
-    if bloquant:
+    if incident:
         absence_incident = 0
     else:
         absence_incident = 100
@@ -247,8 +247,8 @@ def evaluer_trajet(donnees, besoin, depart, arrivee, date, heure):
     un_incident = False
     for station, role in stations:
         equipements = accessibilite[accessibilite["station"] == station].iloc[0]
-        bloquant = incident_bloquant(donnees["incidents"], station)
-        if bloquant:
+        incident = incident_important(donnees["incidents"], station)
+        if incident:
             un_incident = True
         scores_accessibilite.append(equipements["score_normalise"])
         lignes_stations.append({
@@ -256,7 +256,7 @@ def evaluer_trajet(donnees, besoin, depart, arrivee, date, heure):
             "Station": station,
             "Statut": statut_station(equipements, besoin),
             "Équipements": lister_equipements(equipements),
-            "Incident bloquant": "Oui" if bloquant else "Non",
+            "Incident important": "Oui" if incident else "Non",
         })
     tableau_stations = pd.DataFrame(lignes_stations)
 
